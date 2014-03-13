@@ -3,7 +3,7 @@ package ist.mei.pa;
 public class Inspector {
     public void inspect(Object o) {
         //TODO do something inteligent.
-        void terminate(){
+ /*       void terminate(){
             
         }
         void getValue(String name){
@@ -14,7 +14,7 @@ public class Inspector {
         }
         void callsMethod(String name, ){
             
-        }
+        }*/
         }
 }
  
