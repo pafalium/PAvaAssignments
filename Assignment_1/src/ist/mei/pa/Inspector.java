@@ -25,17 +25,6 @@ public class Inspector {
 			}
 		}
 	}
-	/*
-	  void terminate(){
-	  
-	  } void getValue(String name){
-	  
-	  } void modifie(String name, int value){
-	  
-	  } void callsMethod(String name, ){
-	  
-	  }
-	 */
 
 	public void removeCurrent() {
 		_current = null;
@@ -43,5 +32,9 @@ public class Inspector {
 
 	public Object getCurrent() {
 		return _current;
+	}
+	
+	public void setCurrent(Object newCurrent) {
+		_current = newCurrent;
 	}
 }
