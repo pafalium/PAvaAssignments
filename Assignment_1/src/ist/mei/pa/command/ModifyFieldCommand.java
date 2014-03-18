@@ -5,35 +5,33 @@ import java.util.ArrayList;
 
 import ist.mei.pa.Inspector;
 
-public class InspectCommand extends FieldAccessCommand {
+public class ModifyFieldCommand extends FieldAccessCommand {
+
+	private Object _newValue;
 	
-	
-	
-	public InspectCommand(Inspector inspector, String fieldName) {
+	public ModifyFieldCommand(Inspector inspector, String fieldName, Object newValue) {
 		super(inspector, fieldName);
+		_newValue = newValue;
 	}
-
+	
 	@Override
-	public boolean canExecute() {		
+	public boolean canExecute() {
 		ArrayList<Field> fields = getPossibleFields();
-		boolean currentHasField = fields.size() > 0;
-		
-		return currentHasField;
+		if (fields.size() < 0)
+			return false;
+		assert _newValue != null;
+		// field type is a superclass of _newValue's class
+		return fields.get(0).getType().isAssignableFrom(_newValue.getClass());
 	}
-
 
 	@Override
 	public void execute() {
 		ArrayList<Field> fields = getPossibleFields();
-		assert fields.size() > 0 : "There must be at least a field...";
+		assert fields.size() > 0;
 		Field field = fields.get(0);
-		Object curr = getInspector().getCurrent();
-		
-		assert field.getDeclaringClass() == curr.getClass();
 		try {
 			field.setAccessible(true);
-			Object value = field.get(curr);
-			getInspector().setCurrent(value);
+			field.set(getInspector().getCurrent(), _newValue);
 		} catch (IllegalArgumentException e) {
 			// TODO shouldn't happen
 			e.printStackTrace();
@@ -42,4 +40,5 @@ public class InspectCommand extends FieldAccessCommand {
 			e.printStackTrace();
 		}
 	}
+
 }
