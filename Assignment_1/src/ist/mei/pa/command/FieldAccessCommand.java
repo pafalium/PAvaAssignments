@@ -9,7 +9,7 @@ public abstract class FieldAccessCommand extends Command {
 
 	protected String _fieldName;
 	
-	public FieldAccessCommand(Inspector inspector, String fieldName) {
+	protected FieldAccessCommand(Inspector inspector, String fieldName) {
 		super(inspector);
 		_fieldName = fieldName;
 	}
@@ -26,8 +26,7 @@ public abstract class FieldAccessCommand extends Command {
 			} catch (NoSuchFieldException e) {
 				//Do nothing
 			} catch (SecurityException e) {
-				// TODO investigate this
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			currentClass = currentClass.getSuperclass();
 		}

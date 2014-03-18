@@ -34,10 +34,9 @@ public class ModifyFieldCommand extends FieldAccessCommand {
 			field.set(getInspector().getCurrent(), _newValue);
 		} catch (IllegalArgumentException e) {
 			// TODO shouldn't happen
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
