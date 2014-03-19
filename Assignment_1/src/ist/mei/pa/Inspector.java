@@ -50,7 +50,7 @@ public class Inspector {
 		return parsedCommand;
 	}
 
-	//TODO print object
+
 	public void setCurrent(Object newCurrent) {
 		printObject(newCurrent);
 		if (newCurrent.getClass().isPrimitive()) {
@@ -68,7 +68,13 @@ public class Inspector {
         System.out.println("---------------------");
         System.out.println("Fields:");
         for(i=0;i<fields.length;i++){
-            System.out.println(fields[i].getGenericType() + fields[i].getName() + "=" + fields[i]);
+            try {   //TO DO declaration type of each field (private, protected, ...)
+                System.out.println(fields[i].getGenericType() + fields[i].getName() + "=" + fields[i].get(newCurrent));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
         System.out.println("---------------------");
         System.out.println("Methods:");
