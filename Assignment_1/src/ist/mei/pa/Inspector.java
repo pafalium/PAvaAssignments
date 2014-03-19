@@ -75,7 +75,7 @@ public class Inspector {
 	    Field[] fields = newCurrent.getClass().getDeclaredFields();
 	    Method[] methods = newCurrent.getClass().getDeclaredMethods();
 	    
-	    System.err.println(newCurrent + "is an instace of class" + newCurrent.getClass().getName());
+	    System.err.println(newCurrent + " is an instace of class" + newCurrent.getClass().getName());
         System.err.println("---------------------");
         System.err.println("Fields:");
         for(i=0;i<fields.length;i++){
