@@ -56,10 +56,10 @@ public class CallMethodCommand extends Command {
 		 
 		ArrayList<Method> possibleMethods = new ArrayList<Method>();
 		while (currentClass != Object.class) {
-			Method currentField;
+			Method currentMethod;
 			try {
-				currentField = currentClass.getDeclaredMethod(_methodName, paramTypes.toArray(new Class<?>[paramTypes.size()]));
-				possibleMethods.add(currentField);
+				currentMethod = currentClass.getDeclaredMethod(_methodName, paramTypes.toArray(new Class<?>[paramTypes.size()]));
+				possibleMethods.add(currentMethod);
 			} catch (NoSuchMethodException e) {
 				// do nothing
 			} catch (SecurityException e) {

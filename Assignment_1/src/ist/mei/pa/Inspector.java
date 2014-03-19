@@ -56,13 +56,21 @@ public class Inspector {
 
 	public void setCurrent(Object newCurrent) {
 		printObject(newCurrent);
-		if (newCurrent.getClass().isPrimitive()) {
+		if (newCurrent==null||newCurrent.getClass().isPrimitive()) {
 			return;
 		}
 		_current = newCurrent;
 	}
 
 	private void printObject(Object newCurrent) {
+		if (newCurrent == null) {
+			System.err.println("null");
+			return;
+		}
+		if (newCurrent.getClass().isPrimitive()) {
+			System.err.println(newCurrent);
+			return;
+		}
 	    int i,j;
 	    Field[] fields = newCurrent.getClass().getDeclaredFields();
 	    Method[] methods = newCurrent.getClass().getDeclaredMethods();
@@ -72,7 +80,8 @@ public class Inspector {
         System.err.println("Fields:");
         for(i=0;i<fields.length;i++){
             try {   //TO DO declaration type of each field (private, protected, ...)
-                System.out.println(fields[i].getGenericType() + fields[i].getName() + "=" + fields[i].get(newCurrent));
+                fields[i].setAccessible(true);
+            	System.err.println(fields[i].getGenericType() +" "+ fields[i].getName() + " = " + fields[i].get(newCurrent));
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
@@ -82,9 +91,10 @@ public class Inspector {
         System.err.println("---------------------");
         System.err.println("Methods:");
         for(i=0;i<methods.length;i++){
-            System.err.printf("Name:" + methods[i].getName() + "return type:" + methods[i].getReturnType());
+            methods[i].setAccessible(true);
+        	System.err.println("Name: " + methods[i].getName() + "\n\treturn type: " + methods[i].getReturnType());
             for(j=0;j<methods[i].getParameterTypes().length;j++)
-                System.err.println("parameter" + j + " type:" + methods[i].getParameterTypes()[j]);
+                System.err.println("\tparameter" + j + " type: " + methods[i].getParameterTypes()[j].getName());
         }
     }
 
@@ -98,7 +108,7 @@ public class Inspector {
 	}
 	
 	private String promptUser(String msg) throws IOException {
-		System.err.println(msg);
+		System.err.print(msg);
 		String line = _in.readLine();
 		return line;
 	}

@@ -34,7 +34,8 @@ public class CallMethodCommandParser extends CommandParser {
 		for (String possibleValue : possibleValuesText) {
 			if (possibleValue.equals(""))
 				continue;
-			Object value = parser.parseValue(possibleValue);
+			ValueParser.ValueParseResult res = parser.parseValue(possibleValue);
+			Object value = res.value();
 			params.add(value);
 		}
 		return params.toArray();

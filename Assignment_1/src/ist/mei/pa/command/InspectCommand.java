@@ -29,7 +29,8 @@ public class InspectCommand extends FieldAccessCommand {
 		Field field = fields.get(0);
 		Object curr = getInspector().getCurrent();
 		
-		assert field.getDeclaringClass() == curr.getClass();
+		// field declaring class is the same or a superclass of curr.
+		assert field.getDeclaringClass().isAssignableFrom(curr.getClass());
 		try {
 			field.setAccessible(true);
 			Object value = field.get(curr);
