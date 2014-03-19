@@ -8,6 +8,8 @@ import ist.mei.pa.command.parser.QuitCommandParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class Inspector {
@@ -57,7 +59,29 @@ public class Inspector {
 		_current = newCurrent;
 	}
 
-	public void removeCurrent() {
+	private void printObject(Object newCurrent) {
+	    int i,j;
+	    Field[] fields = newCurrent.getClass().getDeclaredFields();
+	    Method[] methods = newCurrent.getClass().getDeclaredMethods();
+	    
+	    System.out.println(newCurrent + "is an instace of class" + newCurrent.getClass().getName());
+        System.out.println("---------------------");
+        System.out.println("Fields:");
+        for(i=0;i<fields.length;i++){
+            System.out.println(fields[i].getGenericType() + fields[i].getName() + "=" + fields[i]);
+        }
+        System.out.println("---------------------");
+        System.out.println("Methods:");
+        for(i=0;i<methods.length;i++){
+            System.out.printf("Name:" + methods[i].getName() + "return type:" + methods[i].getReturnType());
+            for(j=0;j<methods[i].getParameterTypes().length;j++)
+                System.out.println("parameter" + j + " type:" + methods[i].getParameterTypes()[j]);
+        }
+        System.out.printf(">");
+    }
+
+
+    public void removeCurrent() {
 		_current = null;
 	}
 
