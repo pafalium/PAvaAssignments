@@ -30,7 +30,9 @@ public class CallMethodCommand extends Command {
 		Method method = methods.get(0);
 			try {
 				method.setAccessible(true);
-				method.invoke(getInspector().getCurrent(), _methodParameters);
+				Object res = method.invoke(getInspector().getCurrent(), _methodParameters);
+				if (res != null)
+					getInspector().setCurrent(res);
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			} catch (IllegalArgumentException e) {
