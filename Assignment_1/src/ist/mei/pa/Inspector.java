@@ -64,9 +64,9 @@ public class Inspector {
 	    Field[] fields = newCurrent.getClass().getDeclaredFields();
 	    Method[] methods = newCurrent.getClass().getDeclaredMethods();
 	    
-	    System.out.println(newCurrent + "is an instace of class" + newCurrent.getClass().getName());
-        System.out.println("---------------------");
-        System.out.println("Fields:");
+	    System.err.println(newCurrent + "is an instace of class" + newCurrent.getClass().getName());
+        System.err.println("---------------------");
+        System.err.println("Fields:");
         for(i=0;i<fields.length;i++){
             try {   //TO DO declaration type of each field (private, protected, ...)
                 System.out.println(fields[i].getGenericType() + fields[i].getName() + "=" + fields[i].get(newCurrent));
@@ -76,14 +76,13 @@ public class Inspector {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("---------------------");
-        System.out.println("Methods:");
+        System.err.println("---------------------");
+        System.err.println("Methods:");
         for(i=0;i<methods.length;i++){
-            System.out.printf("Name:" + methods[i].getName() + "return type:" + methods[i].getReturnType());
+            System.err.printf("Name:" + methods[i].getName() + "return type:" + methods[i].getReturnType());
             for(j=0;j<methods[i].getParameterTypes().length;j++)
-                System.out.println("parameter" + j + " type:" + methods[i].getParameterTypes()[j]);
+                System.err.println("parameter" + j + " type:" + methods[i].getParameterTypes()[j]);
         }
-        System.out.printf(">");
     }
 
 
