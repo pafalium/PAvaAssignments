@@ -1,8 +1,10 @@
 package ist.mei.pa;
 
 import ist.mei.pa.command.Command;
+import ist.mei.pa.command.parser.CallMethodCommandParser;
 import ist.mei.pa.command.parser.CommandParser;
 import ist.mei.pa.command.parser.InspectCommandParser;
+import ist.mei.pa.command.parser.ModifyFieldCommandParser;
 import ist.mei.pa.command.parser.QuitCommandParser;
 
 import java.io.BufferedReader;
@@ -24,6 +26,8 @@ public class Inspector {
 		_parsers = new ArrayList<CommandParser>();
 		_parsers.add(new QuitCommandParser(this));
 		_parsers.add(new InspectCommandParser(this));
+		_parsers.add(new ModifyFieldCommandParser(this));
+		_parsers.add(new CallMethodCommandParser(this));
 	}
 	
 	
@@ -49,7 +53,6 @@ public class Inspector {
 		}
 		return parsedCommand;
 	}
-
 
 	public void setCurrent(Object newCurrent) {
 		printObject(newCurrent);

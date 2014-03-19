@@ -20,7 +20,7 @@ public class InspectCommandParser extends CommandParser {
 		Matcher matcher = _pattern.matcher(line);
 		if (!matcher.matches())
 			return null;
-		String fieldName = matcher.group();
+		String fieldName = matcher.group(1);
 		return new InspectCommand(_inspector, fieldName);
 	}
 
