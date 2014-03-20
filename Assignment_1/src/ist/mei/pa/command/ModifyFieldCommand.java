@@ -20,8 +20,8 @@ public class ModifyFieldCommand extends FieldAccessCommand {
 		if (fields.size() < 0)
 			return false;
 		assert _newValue != null;
-		// field type is a superclass of _newValue's class
-		return fields.get(0).getType().isAssignableFrom(_newValue.getClass());
+		
+		return SharedThings.assignableFrom(fields.get(0).getType(), _newValue.getClass());
 	}
 
 	@Override
@@ -29,9 +29,11 @@ public class ModifyFieldCommand extends FieldAccessCommand {
 		ArrayList<Field> fields = getPossibleFields();
 		assert fields.size() > 0;
 		Field field = fields.get(0);
+		assert SharedThings.assignableFrom(field.getType(), _newValue.getClass());
 		try {
 			field.setAccessible(true);
 			field.set(getInspector().getCurrent(), _newValue);
+			getInspector().printCurrent();
 		} catch (IllegalArgumentException e) {
 			// TODO shouldn't happen
 			throw new RuntimeException(e);

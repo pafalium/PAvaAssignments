@@ -49,19 +49,30 @@ public class CallMethodCommand extends Command {
 		Object curr = getInspector().getCurrent();
 		Class<?> currentClass = curr.getClass();
 		
-		ArrayList<Class<?>> paramTypes = new ArrayList<Class<?>>(_methodParameters.length);
+		ArrayList<Class<?>> givenTypes = new ArrayList<Class<?>>(_methodParameters.length);
 		for (Object param : _methodParameters) {
-			paramTypes.add(param.getClass());
+			givenTypes.add(param.getClass());
 		}
 		 
 		ArrayList<Method> possibleMethods = new ArrayList<Method>();
 		while (currentClass != Object.class) {
-			Method currentMethod;
 			try {
-				currentMethod = currentClass.getDeclaredMethod(_methodName, paramTypes.toArray(new Class<?>[paramTypes.size()]));
-				possibleMethods.add(currentMethod);
-			} catch (NoSuchMethodException e) {
-				// do nothing
+				Method[] methods = currentClass.getDeclaredMethods();
+				for (Method method : methods) {
+					if (!method.getName().equals(_methodName))
+						continue;
+					Class<?>[] paramTypes = method.getParameterTypes();
+					if (!(paramTypes.length == givenTypes.size()))
+						continue;
+					boolean allTypesMatch = true;
+					for(int i=0; i< paramTypes.length; i++) {
+						if(!SharedThings.assignableFrom(paramTypes[i], givenTypes.get(i)))
+							allTypesMatch = false;
+					}
+					if (allTypesMatch)
+						possibleMethods.add(method);
+				}
+
 			} catch (SecurityException e) {
 				throw new RuntimeException(e);
 			}

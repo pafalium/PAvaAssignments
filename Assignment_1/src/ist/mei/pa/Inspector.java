@@ -1,6 +1,7 @@
 package ist.mei.pa;
 
 import ist.mei.pa.command.Command;
+import ist.mei.pa.command.SharedThings;
 import ist.mei.pa.command.parser.CallMethodCommandParser;
 import ist.mei.pa.command.parser.CommandParser;
 import ist.mei.pa.command.parser.InspectCommandParser;
@@ -37,10 +38,14 @@ public class Inspector {
 		while (_current != null) {
 			String line = promptUser("> ");
 			
+			boolean commandFound = false;
 			Command com = parseCommand(line);
 			if(com.canExecute()) {
+				commandFound = true;
 				com.execute();
 			}
+			if (!commandFound)
+				System.err.println("No command was executed.");
 		}
 	}
 
@@ -67,7 +72,7 @@ public class Inspector {
 			System.err.println("null");
 			return;
 		}
-		if (newCurrent.getClass().isPrimitive()) {
+		if (SharedThings.isWrapper(newCurrent.getClass())) {
 			System.err.println(newCurrent);
 			return;
 		}
@@ -98,6 +103,9 @@ public class Inspector {
         }
     }
 
+	public void printCurrent() {
+		printObject(_current);
+	}
 
     public void removeCurrent() {
 		_current = null;
