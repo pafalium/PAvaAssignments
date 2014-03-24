@@ -40,7 +40,7 @@ public class Inspector {
 			
 			boolean commandFound = false;
 			Command com = parseCommand(line);
-			if(com.canExecute()) {
+			if(com != null && com.canExecute()) {
 				commandFound = true;
 				com.execute();
 			}
