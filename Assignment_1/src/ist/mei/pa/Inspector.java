@@ -61,7 +61,8 @@ public class Inspector {
 
 	public void setCurrent(Object newCurrent) {
 		printObject(newCurrent);
-		if (newCurrent==null||newCurrent.getClass().isPrimitive()) {
+		if (newCurrent==null||newCurrent.getClass().isPrimitive()
+				||SharedThings.isWrapper(newCurrent.getClass())) {
 			return;
 		}
 		_current = newCurrent;
