@@ -13,7 +13,7 @@ public class InspectCommandParser extends CommandParser {
 		super(inspector);
 	}
 
-	private static Pattern _pattern = Pattern.compile("i[\\s]+("+IDENTIFIER+")");
+	private static Pattern _pattern = Pattern.compile("i[\\s]+("+IDENTIFIER+")[\\s]*");
 	
 	@Override
 	public Command parseCommand(String line) {

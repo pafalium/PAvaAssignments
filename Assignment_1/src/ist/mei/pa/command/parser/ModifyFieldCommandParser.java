@@ -10,7 +10,7 @@ import ist.mei.pa.command.ModifyFieldCommand;
 public class ModifyFieldCommandParser extends CommandParser {
 
 	
-	private static Pattern _pattern = Pattern.compile("m[\\s]+("+IDENTIFIER+")[\\s]+("+ValueParser.VALUE+")");
+	private static Pattern _pattern = Pattern.compile("m[\\s]+("+IDENTIFIER+")[\\s]+("+ValueParser.VALUE+")[\\s]*");
 	
 	
 	public ModifyFieldCommandParser(Inspector inspector) {

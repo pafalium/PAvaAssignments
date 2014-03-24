@@ -10,7 +10,7 @@ import ist.mei.pa.command.Command;
 
 public class CallMethodCommandParser extends CommandParser {
 
-	private static Pattern _pattern = Pattern.compile("c[\\s]+("+IDENTIFIER+")(([\\s]+"+ValueParser.VALUE+")*)");
+	private static Pattern _pattern = Pattern.compile("c[\\s]+("+IDENTIFIER+")(([\\s]+"+ValueParser.VALUE+")*)[\\s]*");
 	
 	public CallMethodCommandParser(Inspector inspector) {
 		super(inspector);

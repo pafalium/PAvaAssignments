@@ -9,7 +9,7 @@ import ist.mei.pa.command.QuitCommand;
 
 public class QuitCommandParser extends CommandParser {
 
-	private static Pattern _pattern = Pattern.compile("q");
+	private static Pattern _pattern = Pattern.compile("q[\\s]*");
 	
 	public QuitCommandParser(Inspector inspector) {
 		super(inspector);
