@@ -37,6 +37,10 @@ public class TestClass {
 		System.out.println("Given Integer = "+i);
 	}
 	
+	private void giveIntString(int i, String s) {
+		System.out.println("Given int="+i+" Given String=\""+s+"\"");
+	}
+	
 	private Object getOther() {
 		return new TestClass();
 	}
