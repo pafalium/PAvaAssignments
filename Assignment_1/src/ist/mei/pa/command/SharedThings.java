@@ -8,15 +8,23 @@ public class SharedThings {
 			char.class, float.class, double.class, byte.class, short.class,
 			long.class };
 
-	public static boolean assignableFrom(Class<?> primitive, Class<?> other) {
-		boolean normalAssignable = primitive.isAssignableFrom(other);
+	/**
+	 * Determine if instanceType can be the type of an instance 
+	 * referenced by a variable of type destination.
+	 * If  {@code destination var = (instanceType) instance; } is possible.
+	 * @param destination
+	 * @param instanceType
+	 * @return
+	 */
+	public static boolean assignableFrom(Class<?> destination, Class<?> instanceType) {
+		boolean normalAssignable = destination.isAssignableFrom(instanceType);
 		if (normalAssignable)
 			return true;
-		if (!primitive.isPrimitive())
+		if (!destination.isPrimitive())
 			return false;
 
 		for (int i = 0; i < wrappers.length; i++) {
-			if (other.equals(wrappers[i]) && primitive.equals(primitives[i]))
+			if (instanceType.equals(wrappers[i]) && destination.equals(primitives[i]))
 				return true;
 		}
 		return false;
