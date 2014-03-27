@@ -24,7 +24,7 @@ public class ModifyFieldCommandParser extends CommandParser {
 			return null;
 		String fieldName = matcher.group(1);
 		String newValueText = matcher.group(2);
-		ValueParser parser = new ValueParser();
+		ValueParser parser = new ValueParser(_inspector);
 		ValueParser.ValueParseResult res = parser.parseValue(newValueText);
 		ModifyFieldCommand com = null;
 		if (res.wasSuccessful()) {

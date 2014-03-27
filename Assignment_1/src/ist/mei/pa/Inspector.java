@@ -7,6 +7,7 @@ import ist.mei.pa.command.parser.CommandParser;
 import ist.mei.pa.command.parser.InspectCommandParser;
 import ist.mei.pa.command.parser.ModifyFieldCommandParser;
 import ist.mei.pa.command.parser.QuitCommandParser;
+import ist.mei.pa.command.parser.SaveLastResultParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,21 +15,30 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Inspector {
 	/** Object currently being inspected.*/
 	private Object _current;
+	/** The last command result if any. 
+	 * (opposed to _current also stores primitive wrapper types)*/
+	private Object _lastResult;
+	/**	Saved results. */
+	private Map<String, Object> _savedResults;
 	/** Input stream reader for this Inspector.*/
-	BufferedReader _in = new BufferedReader(new InputStreamReader(System.in));
+	private BufferedReader _in = new BufferedReader(new InputStreamReader(System.in));
 	/** Parser for all the Commands accepted by this Inspector.*/
-	ArrayList<CommandParser> _parsers;
+	private ArrayList<CommandParser> _parsers;
 	
 	public Inspector() {
+		_savedResults = new HashMap<String, Object>();
 		_parsers = new ArrayList<CommandParser>();
 		_parsers.add(new QuitCommandParser(this));
 		_parsers.add(new InspectCommandParser(this));
 		_parsers.add(new ModifyFieldCommandParser(this));
 		_parsers.add(new CallMethodCommandParser(this));
+		_parsers.add(new SaveLastResultParser(this));
 	}
 	
 	
@@ -60,6 +70,7 @@ public class Inspector {
 	}
 
 	public void setCurrent(Object newCurrent) {
+		_lastResult = newCurrent;
 		printObject(newCurrent);
 		if (newCurrent==null||newCurrent.getClass().isPrimitive()
 				||SharedThings.isWrapper(newCurrent.getClass())) {
@@ -107,6 +118,10 @@ public class Inspector {
 	public void printCurrent() {
 		printObject(_current);
 	}
+	
+	public void printLine(String line) {
+		System.err.println(line);
+	}
 
     public void removeCurrent() {
 		_current = null;
@@ -114,6 +129,22 @@ public class Inspector {
 
 	public Object getCurrent() {
 		return _current;
+	}
+	
+	public Object getLastResult() {
+		return _lastResult;
+	}
+	
+	public void saveLastResult(String name) {
+		_savedResults.put(name, _lastResult);
+	}
+	
+	public Object getSavedResult(String name) {
+		return _savedResults.get(name);
+	}
+	
+	public boolean hasSavedResult(String name) {
+		return _savedResults.containsKey(name);
 	}
 	
 	private String promptUser(String msg) throws IOException {

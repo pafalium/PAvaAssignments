@@ -30,7 +30,7 @@ public class CallMethodCommandParser extends CommandParser {
 	private Object[] parseParams(String valuesText) {
 		String[] possibleValuesText = valuesText.split("[\\s]+");
 		ArrayList<Object> params = new ArrayList<Object>();
-		ValueParser parser = new ValueParser();
+		ValueParser parser = new ValueParser(_inspector);
 		for (String possibleValue : possibleValuesText) {
 			if (possibleValue.equals(""))
 				continue;
