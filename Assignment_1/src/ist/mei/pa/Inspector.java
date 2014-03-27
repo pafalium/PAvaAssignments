@@ -5,6 +5,7 @@ import ist.mei.pa.command.SharedThings;
 import ist.mei.pa.command.parser.CallMethodCommandParser;
 import ist.mei.pa.command.parser.CommandParser;
 import ist.mei.pa.command.parser.InspectCommandParser;
+import ist.mei.pa.command.parser.InspectPreviousCommandParser;
 import ist.mei.pa.command.parser.ModifyFieldCommandParser;
 import ist.mei.pa.command.parser.QuitCommandParser;
 import ist.mei.pa.command.parser.SaveLastResultParser;
@@ -26,6 +27,8 @@ public class Inspector {
 	private Object _lastResult;
 	/**	Saved results. */
 	private Map<String, Object> _savedResults;
+	/** Previously inspected objects in order.*/
+	private ArrayList<Object> _inspectionStack;
 	/** Input stream reader for this Inspector.*/
 	private BufferedReader _in = new BufferedReader(new InputStreamReader(System.in));
 	/** Parser for all the Commands accepted by this Inspector.*/
@@ -33,12 +36,14 @@ public class Inspector {
 	
 	public Inspector() {
 		_savedResults = new HashMap<String, Object>();
+		_inspectionStack = new ArrayList<Object>();
 		_parsers = new ArrayList<CommandParser>();
 		_parsers.add(new QuitCommandParser(this));
 		_parsers.add(new InspectCommandParser(this));
 		_parsers.add(new ModifyFieldCommandParser(this));
 		_parsers.add(new CallMethodCommandParser(this));
 		_parsers.add(new SaveLastResultParser(this));
+		_parsers.add(new InspectPreviousCommandParser(this));
 	}
 	
 	
@@ -76,7 +81,22 @@ public class Inspector {
 				||SharedThings.isWrapper(newCurrent.getClass())) {
 			return;
 		}
+		if (_current != null) {
+			_inspectionStack.add(_current);
+		}
 		_current = newCurrent;
+	}
+	
+	public void setPreviousCurrent() {
+		if(_inspectionStack.size() < 1)
+			return;
+		Object last = _inspectionStack.get(_inspectionStack.size()-1);
+		_inspectionStack.remove(_inspectionStack.size()-1);
+		_current = last;
+	}
+	
+	public int inspectionStackSize() {
+		return _inspectionStack.size();
 	}
 
 	private void printObject(Object newCurrent) {
