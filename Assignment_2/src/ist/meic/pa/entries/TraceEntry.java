@@ -1,4 +1,4 @@
-package ist.meic.pa.tracer.entries;
+package ist.meic.pa.entries;
 
 /**
  * A {@link TraceEntry} is to be used as a means to store

@@ -1,4 +1,4 @@
-package ist.meic.pa.tracer;
+package ist.meic.pa;
 
 import javassist.*;
 import javassist.expr.ConstructorCall;
@@ -85,22 +85,22 @@ class TraceTranslator implements Translator {
 				throw new RuntimeException(e);
 			}
 			String argsTemplate = 
-					"for(int my$i=0; i<$args; i++) {"+
-					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
-					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"for(int my$i=0; my$i<$args.length; my$i++) {"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
 					"   }"+
-					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
-					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
 					"}";
 			String retTemplate = 
-					"Object res$ = $proceed($$);"+
+					"java.lang.Object res$ = $proceed($$);"+
 					"if(!Trace.traceHistory.containsKey(res$)){"+
-					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList())"+
 					"}"+
-					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
-					"Trace.traceHistory.get(res$).add(entr);"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
 					"$_ = res$";
-			m.replace(argsTemplate+retTemplate);
+			m.replace("{"+argsTemplate+retTemplate+"}");
 		}
 		@Override
 		public void edit(NewExpr e) throws CannotCompileException {
@@ -113,22 +113,22 @@ class TraceTranslator implements Translator {
 				throw new RuntimeException(ex);
 			}
 			String argsTemplate = 
-					"for(int my$i=0; i<$args; i++) {"+
-					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
-					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"for(int my$i=0; my$i<$args.length; my$i++) {"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
 					"   }"+
-					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
-					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
 					"}";
 			String retTemplate = 
-					"Object res$ = $proceed($$);"+
-					"if(!Trace.traceHistory.containsKey(res$)){"+
-					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"java.lang.Object res$ = $proceed($$);"+
+					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
 					"}"+
-					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
-					"Trace.traceHistory.get(res$).add(entr);"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
 					"$_ = res$";
-			e.replace(argsTemplate+retTemplate);
+			e.replace("{"+argsTemplate+retTemplate+"}");
 		}
 		@Override
 		public void edit(NewArray a) throws CannotCompileException {
@@ -143,14 +143,14 @@ class TraceTranslator implements Translator {
 				throw new RuntimeException(ex);
 			}
 			String retTemplate = 
-					"Object res$ = $proceed($$);"+
-					"if(!Trace.traceHistory.containsKey(res$)){"+
-					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"java.lang.Object res$ = $proceed($$);"+
+					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
 					"}"+
-					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
-					"Trace.traceHistory.get(res$).add(entr);"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
 					"$_ = res$";
-			a.replace(retTemplate);
+			a.replace("{"+retTemplate+"}");
 		}
 		@Override
 		public void edit(ConstructorCall c) throws CannotCompileException {
@@ -164,16 +164,16 @@ class TraceTranslator implements Translator {
 			}
 			//assuming I can violate java semantics
 			String argsTemplate = 
-					"for(int my$i=0; i<$args; i++) {"+
-					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
-					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"for(int my$i=0; my$i<$args.length; my$i++) {"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
 					"   }"+
-					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
-					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
 					"}";
 			String proceedTemplate = 
 					"$proceed($$);";
-			c.replace(argsTemplate+proceedTemplate);
+			c.replace("{"+argsTemplate+proceedTemplate+"}");
 		}
 	}
 }

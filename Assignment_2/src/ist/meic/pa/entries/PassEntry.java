@@ -1,4 +1,4 @@
-package ist.meic.pa.tracer.entries;
+package ist.meic.pa.entries;
 
 public class PassEntry extends TraceEntry {
 
