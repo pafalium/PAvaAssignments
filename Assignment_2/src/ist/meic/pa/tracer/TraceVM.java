@@ -76,19 +76,104 @@ class TraceTranslator implements Translator {
 	class TraceEditor extends ExprEditor {
 		@Override
 		public void edit(MethodCall m) throws CannotCompileException {
-			// TODO Auto-generated method stub
-		}
-		@Override
-		public void edit(ConstructorCall c) throws CannotCompileException {
-			// TODO Auto-generated method stub
-		}
-		@Override
-		public void edit(NewArray a) throws CannotCompileException {
-			// TODO Auto-generated method stub
+			int line = m.getLineNumber();
+			String file = m.getFileName();
+			String sig;
+			try {
+				sig = m.getMethod().getLongName();
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			String argsTemplate = 
+					"for(int my$i=0; i<$args; i++) {"+
+					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
+					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"   }"+
+					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
+					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"}";
+			String retTemplate = 
+					"Object res$ = $proceed($$);"+
+					"if(!Trace.traceHistory.containsKey(res$)){"+
+					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"}"+
+					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
+					"Trace.traceHistory.get(res$).add(entr);"+
+					"$_ = res$";
+			m.replace(argsTemplate+retTemplate);
 		}
 		@Override
 		public void edit(NewExpr e) throws CannotCompileException {
-			// TODO Auto-generated method stub
+			int line = e.getLineNumber();
+			String file = e.getFileName();
+			String sig;
+			try {
+				sig = e.getConstructor().getLongName();
+			} catch (NotFoundException ex) {
+				throw new RuntimeException(ex);
+			}
+			String argsTemplate = 
+					"for(int my$i=0; i<$args; i++) {"+
+					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
+					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"   }"+
+					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
+					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"}";
+			String retTemplate = 
+					"Object res$ = $proceed($$);"+
+					"if(!Trace.traceHistory.containsKey(res$)){"+
+					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"}"+
+					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
+					"Trace.traceHistory.get(res$).add(entr);"+
+					"$_ = res$";
+			e.replace(argsTemplate+retTemplate);
+		}
+		@Override
+		public void edit(NewArray a) throws CannotCompileException {
+			int line = a.getLineNumber();
+			String file = a.getFileName();
+			String sig;
+			try {
+				sig = a.getComponentType().getName();
+				for (int i=0; i<a.getCreatedDimensions(); i++)
+					sig += "[]";
+			} catch (NotFoundException ex) {
+				throw new RuntimeException(ex);
+			}
+			String retTemplate = 
+					"Object res$ = $proceed($$);"+
+					"if(!Trace.traceHistory.containsKey(res$)){"+
+					"   Trace.traceHistory.put(res$,new ArrayList())"+
+					"}"+
+					"ReturnEntry entr = new ReturnEntry("+sig+","+file+","+line+");"+
+					"Trace.traceHistory.get(res$).add(entr);"+
+					"$_ = res$";
+			a.replace(retTemplate);
+		}
+		@Override
+		public void edit(ConstructorCall c) throws CannotCompileException {
+			int line = c.getLineNumber();
+			String file = c.getFileName();
+			String sig;
+			try {
+				sig = c.getConstructor().getLongName();
+			} catch (NotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			//assuming I can violate java semantics
+			String argsTemplate = 
+					"for(int my$i=0; i<$args; i++) {"+
+					"   if(!Trace.traceHistory.containsKey($args[my$i])){"+
+					"      Trace.traceHistory.put($args[my$i],new ArrayList())"+
+					"   }"+
+					"   PassEntry entr = new PassEntry("+sig+","+file+","+line+");"+
+					"   Trace.traceHistory.get($args[my$i]).add(entr);"+
+					"}";
+			String proceedTemplate = 
+					"$proceed($$);";
+			c.replace(argsTemplate+proceedTemplate);
 		}
 	}
 }
