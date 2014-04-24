@@ -6,10 +6,21 @@ package ist.meic.pa.tracer.entries;
  * as an argument and where it was returned).
  * @author Pedro-170
  */
-public abstract interface TraceEntry {
+public abstract class TraceEntry {
+	
+	protected int linenum;
+	protected String filename;
+	protected String signature;
+	
+	protected TraceEntry(String sig, String file, int linenum) {
+		signature = sig;
+		filename = file;
+		this.linenum = linenum;
+	}
+	
 	/**
 	 * 
 	 * @return a {@link String} representing the entry.
 	 */
-	public String getOutput();
+	public abstract String getOutput();
 }
