@@ -95,11 +95,11 @@ class TraceTranslator implements Translator {
 			String retTemplate = 
 					"java.lang.Object res$ = $proceed($$);"+
 					"if(!Trace.traceHistory.containsKey(res$)){"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList())"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
 					"}"+
 					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
 					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = res$";
+					"$_ = ($r) res$";
 			m.replace("{"+argsTemplate+retTemplate+"}");
 		}
 		@Override
@@ -127,7 +127,7 @@ class TraceTranslator implements Translator {
 					"}"+
 					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
 					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = res$";
+					"$_ = ($r) res$";
 			e.replace("{"+argsTemplate+retTemplate+"}");
 		}
 		@Override
@@ -149,7 +149,7 @@ class TraceTranslator implements Translator {
 					"}"+
 					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
 					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = res$";
+					"$_ = ($r) res$";
 			a.replace("{"+retTemplate+"}");
 		}
 		@Override
