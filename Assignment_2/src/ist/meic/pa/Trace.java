@@ -5,7 +5,7 @@ import ist.meic.pa.entries.ReturnEntry;
 import ist.meic.pa.entries.TraceEntry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ public class Trace {
 	/**
 	 * Map containing all tracing history for every object. Should
 	 */
-	public static Map<Object, ArrayList<TraceEntry>> traceHistory = new HashMap<Object, ArrayList<TraceEntry>>();
+	public static Map<Object, ArrayList<TraceEntry>> traceHistory = new IdentityHashMap<Object, ArrayList<TraceEntry>>();
 
 	public static void print(Object obj) {
 		ArrayList<TraceEntry> objHistory = traceHistory.get(obj);
