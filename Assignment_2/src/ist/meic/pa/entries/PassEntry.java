@@ -8,7 +8,7 @@ public class PassEntry extends TraceEntry {
 	
 	@Override
 	public String getOutput() {
-		return "  -> " + signature + "on " + filename + ":" + linenum;
+		return "  -> " + signature + " on " + filename + ":" + linenum;
 	}
 
 }

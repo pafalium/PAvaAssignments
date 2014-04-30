@@ -31,6 +31,9 @@ public class TraceVM {
 			Translator translator = new TraceTranslator();
 			ClassPool pool = ClassPool.getDefault();
 			Loader classLoader = new Loader();
+			classLoader.delegateLoadingOf("ist.meic.pa.Trace");
+			classLoader.delegateLoadingOf("ist.meic.pa.TraceVM");
+			classLoader.delegateLoadingOf("ist.meic.pa.entries.");
 			classLoader.addTranslator(pool, translator);
 			String[] restArgs = new String[args.length - 1];
 			System.arraycopy(args, 1, restArgs, 0, restArgs.length);
@@ -84,23 +87,33 @@ class TraceTranslator implements Translator {
 			} catch (NotFoundException e) {
 				throw new RuntimeException(e);
 			}
-			String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
-					"   }"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
+			file = "\""+file+"\"";
+			sig = "\""+sig+"\"";
+			/*String argsTemplate = 
+					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
+					"   }\n"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
 					"}";
 			String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);"+
-					"if(!Trace.traceHistory.containsKey(res$)){"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
-					"}"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = ($r) res$";
-			m.replace("{"+argsTemplate+retTemplate+"}");
+					"java.lang.Object res$ = $proceed($$);\n"+
+					"if(!Trace.traceHistory.containsKey(res$)){\n"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
+					"}\n"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
+					"$_ = ($r) res$;\n";
+			String template = "{"+argsTemplate+retTemplate+"}";*/
+			String novaTemplate = 
+					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"    Object ret$ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
+					"    $_ = ($r) ret$;\n"+
+					"}\n";
+			System.out.println(novaTemplate);
+			m.replace(novaTemplate);
 		}
 		@Override
 		public void edit(NewExpr e) throws CannotCompileException {
@@ -112,23 +125,33 @@ class TraceTranslator implements Translator {
 			} catch (NotFoundException ex) {
 				throw new RuntimeException(ex);
 			}
-			String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
-					"   }"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
-					"}";
+			file = "\""+file+"\"";
+			sig = "\""+sig+"\"";
+			/*String argsTemplate = 
+					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
+					"   }\n"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
+					"}\n";
 			String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);"+
-					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
-					"}"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = ($r) res$";
-			e.replace("{"+argsTemplate+retTemplate+"}");
+					"java.lang.Object res$ = $proceed($$);\n"+
+					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){\n"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
+					"}\n"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
+					"$_ = ($r) res$;\n";
+			String template = "{"+argsTemplate+retTemplate+"}";*/
+			String novaTemplate = 
+					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"    Object ret$ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
+					"    $_ = ($r) ret$;\n"+
+					"}\n";
+			System.out.println(novaTemplate);
+			e.replace(novaTemplate);
 		}
 		@Override
 		public void edit(NewArray a) throws CannotCompileException {
@@ -142,15 +165,25 @@ class TraceTranslator implements Translator {
 			} catch (NotFoundException ex) {
 				throw new RuntimeException(ex);
 			}
-			String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);"+
-					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());"+
-					"}"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);"+
-					"$_ = ($r) res$";
-			a.replace("{"+retTemplate+"}");
+			file = "\""+file+"\"";
+			sig = "\""+sig+"\"";
+			/*String retTemplate = 
+					"java.lang.Object res$ = $proceed($$);\n"+
+					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){\n"+
+					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
+					"}\n"+
+					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
+					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
+					"$_ = ($r) res$;\n";
+			String template = "{"+retTemplate+"}";*/
+			String novaTemplate = 
+					"{\n "+
+					"    Object ret$ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
+					"    $_ = ($r) ret$;\n"+
+					"}\n";
+			System.out.println(novaTemplate);
+			a.replace(novaTemplate);
 		}
 		@Override
 		public void edit(ConstructorCall c) throws CannotCompileException {
@@ -162,18 +195,26 @@ class TraceTranslator implements Translator {
 			} catch (NotFoundException e) {
 				throw new RuntimeException(e);
 			}
+			file = "\""+file+"\"";
+			sig = "\""+sig+"\"";
 			//assuming I can violate java semantics
-			String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());"+
-					"   }"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);"+
-					"}";
+			/*String argsTemplate = 
+					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
+					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
+					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
+					"   }\n"+
+					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
+					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
+					"}\n";
 			String proceedTemplate = 
-					"$proceed($$);";
-			c.replace("{"+argsTemplate+proceedTemplate+"}");
+					"$proceed($$);\n";
+			String template = "{"+argsTemplate+proceedTemplate+"}";*/
+			String novaTemplate = 
+					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"    $proceed($$);\n"+
+					"}\n";
+			System.out.println(novaTemplate);
+			c.replace(novaTemplate);
 		}
 	}
 }
