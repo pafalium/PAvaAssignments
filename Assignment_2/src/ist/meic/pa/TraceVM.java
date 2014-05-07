@@ -63,17 +63,11 @@ class TraceTranslator implements Translator {
 	}
 
 	private void instrumentTrace(CtClass ctClass) throws CannotCompileException {
-		//TODO implement
 		CtBehavior[] behaviours = ctClass.getDeclaredBehaviors();
 		
 		for (CtBehavior behaviour : behaviours) {
 			behaviour.instrument(new TraceEditor());
 		}
-		//zonas a editar:
-		// - initializer blocks (instance and static) - instance are copied to every constructor
-		// - method body -
-		// - constructors (if not the same as methods) -
-		// - finalize blocks (it's a method)
 	}
 	
 	class TraceEditor extends ExprEditor {
@@ -89,28 +83,12 @@ class TraceTranslator implements Translator {
 			}
 			file = "\""+file+"\"";
 			sig = "\""+sig+"\"";
-			/*String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
-					"   }\n"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
-					"}";
-			String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);\n"+
-					"if(!Trace.traceHistory.containsKey(res$)){\n"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
-					"}\n"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
-					"$_ = ($r) res$;\n";
-			String template = "{"+argsTemplate+retTemplate+"}";*/
+
 			String novaTemplate = 
-					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
-					"    Object ret$ = $proceed($$);\n"+
-					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
-					"    $_ = ($r) ret$;\n"+
+					"{\n"+
+					"    ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"    $_ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 					"}\n";
 			System.out.println(novaTemplate);
 			m.replace(novaTemplate);
@@ -127,32 +105,18 @@ class TraceTranslator implements Translator {
 			}
 			file = "\""+file+"\"";
 			sig = "\""+sig+"\"";
-			/*String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
-					"   }\n"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
-					"}\n";
-			String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);\n"+
-					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){\n"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
-					"}\n"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
-					"$_ = ($r) res$;\n";
-			String template = "{"+argsTemplate+retTemplate+"}";*/
+			
 			String novaTemplate = 
-					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
-					"    Object ret$ = $proceed($$);\n"+
-					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
-					"    $_ = ($r) ret$;\n"+
+					"{\n"+
+					"    ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"    $_ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 					"}\n";
 			System.out.println(novaTemplate);
 			e.replace(novaTemplate);
 		}
+	}
+	class ExtendedTraceEditor extends TraceEditor {
 		@Override
 		public void edit(NewArray a) throws CannotCompileException {
 			int line = a.getLineNumber();
@@ -167,20 +131,11 @@ class TraceTranslator implements Translator {
 			}
 			file = "\""+file+"\"";
 			sig = "\""+sig+"\"";
-			/*String retTemplate = 
-					"java.lang.Object res$ = $proceed($$);\n"+
-					"if(!ist.meic.pa.Trace.traceHistory.containsKey(res$)){\n"+
-					"   ist.meic.pa.Trace.traceHistory.put(res$,new java.util.ArrayList());\n"+
-					"}\n"+
-					"ist.meic.pa.entries.ReturnEntry entr = new ist.meic.pa.entries.ReturnEntry("+sig+","+file+","+line+");\n"+
-					"ist.meic.pa.Trace.traceHistory.get(res$).add(entr);\n"+
-					"$_ = ($r) res$;\n";
-			String template = "{"+retTemplate+"}";*/
+
 			String novaTemplate = 
-					"{\n "+
-					"    Object ret$ = $proceed($$);\n"+
-					"    ist.meic.pa.Trace.traceReturn(ret$,"+sig+","+file+","+line+");\n"+
-					"    $_ = ($r) ret$;\n"+
+					"{\n"+
+					"    $_ = $proceed($$);\n"+
+					"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 					"}\n";
 			System.out.println(novaTemplate);
 			a.replace(novaTemplate);
@@ -198,19 +153,9 @@ class TraceTranslator implements Translator {
 			file = "\""+file+"\"";
 			sig = "\""+sig+"\"";
 			//assuming I can violate java semantics
-			/*String argsTemplate = 
-					"for(int my$i=0; my$i<$args.length; my$i++) {\n"+
-					"   if(!ist.meic.pa.Trace.traceHistory.containsKey($args[my$i])){\n"+
-					"      ist.meic.pa.Trace.traceHistory.put($args[my$i],new java.util.ArrayList());\n"+
-					"   }\n"+
-					"   ist.meic.pa.entries.PassEntry entr = new ist.meic.pa.entries.PassEntry("+sig+","+file+","+line+");\n"+
-					"   ist.meic.pa.Trace.traceHistory.get($args[my$i]).add(entr);\n"+
-					"}\n";
-			String proceedTemplate = 
-					"$proceed($$);\n";
-			String template = "{"+argsTemplate+proceedTemplate+"}";*/
 			String novaTemplate = 
-					"{\n ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
+					"{\n"+
+					"    ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
 					"    $proceed($$);\n"+
 					"}\n";
 			System.out.println(novaTemplate);
