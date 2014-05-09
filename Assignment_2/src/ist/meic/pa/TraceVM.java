@@ -16,6 +16,12 @@ import javassist.expr.NewExpr;
 public class TraceVM {
 
 	/**
+	 * Debug messages flag.
+	 * Not sure where it can be changed besides before compilation.
+	 */
+	public static final boolean debug = false;
+	
+	/**
 	 * @param args
 	 *            the name of the starting {@link Class} followed by the
 	 *            arguments to be passed to it.
@@ -64,16 +70,28 @@ class TraceTranslator implements Translator {
 		CtBehavior[] behaviours = ctClass.getDeclaredBehaviors();
 		
 		for (CtBehavior behaviour : behaviours) {
-			behaviour.instrument(createEditor());
+			behaviour.instrument(createEditor(TraceVM.debug));
 		}
 	}
 	
-	protected ExprEditor createEditor() {
-		return new TraceEditor();
+	protected ExprEditor createEditor(boolean debug) {
+		return new TraceEditor(debug);
 	}
 }
 
 class TraceEditor extends ExprEditor {
+	private boolean debug;
+	
+	public TraceEditor(boolean debug) {
+		super();
+		this.debug = debug;
+	}
+	
+	protected void debugPrint(String message) {
+		if (debug)
+			System.out.println(message);
+	}
+	
 	@Override
 	public void edit(MethodCall m) throws CannotCompileException {
 		int line = m.getLineNumber();
@@ -93,7 +111,7 @@ class TraceEditor extends ExprEditor {
 				"    $_ = $proceed($$);\n"+
 				"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 				"}\n";
-		System.out.println(novaTemplate);
+		debugPrint(novaTemplate);
 		m.replace(novaTemplate);
 	}
 	@Override
@@ -115,7 +133,7 @@ class TraceEditor extends ExprEditor {
 				"    $_ = $proceed($$);\n"+
 				"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 				"}\n";
-		System.out.println(novaTemplate);
+		debugPrint(novaTemplate);
 		e.replace(novaTemplate);
 	}
 }

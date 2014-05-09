@@ -38,12 +38,16 @@ public class TraceVMExtended extends TraceVM {
 
 class ExtendedTraceTranslator extends TraceTranslator {
 	@Override
-	protected ExprEditor createEditor() {
-		return new ExtendedTraceEditor();
+	protected ExprEditor createEditor(boolean debug) {
+		return new ExtendedTraceEditor(debug);
 	}
 }
 
 class ExtendedTraceEditor extends TraceEditor {
+	public ExtendedTraceEditor(boolean debug) {
+		super(debug);
+	}
+	
 	@Override
 	public void edit(NewArray a) throws CannotCompileException {
 		int line = a.getLineNumber();
@@ -64,7 +68,7 @@ class ExtendedTraceEditor extends TraceEditor {
 				"    $_ = $proceed($$);\n"+
 				"    ist.meic.pa.Trace.traceReturn(($w)$_,"+sig+","+file+","+line+");\n"+
 				"}\n";
-		System.out.println(novaTemplate);
+		debugPrint(novaTemplate);
 		a.replace(novaTemplate);
 	}
 	@Override
@@ -85,7 +89,7 @@ class ExtendedTraceEditor extends TraceEditor {
 				"    ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
 				"    $proceed($$);\n"+
 				"}\n";
-		System.out.println(novaTemplate);
+		debugPrint(novaTemplate);
 		c.replace(novaTemplate);
 	}
 }
