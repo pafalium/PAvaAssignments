@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class Trace {
 	/**
-	 * Map containing all tracing history for every object. Should
+	 * Map containing all tracing history for every object.
 	 */
 	public static Map<Object, ArrayList<TraceEntry>> traceHistory = new IdentityHashMap<Object, ArrayList<TraceEntry>>();
 

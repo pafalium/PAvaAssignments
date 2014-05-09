@@ -10,6 +10,13 @@ import javassist.expr.ConstructorCall;
 import javassist.expr.ExprEditor;
 import javassist.expr.NewArray;
 
+/**
+ * Extension of {@link TraceVM}.
+ * While using this class objects being passed in {@link ConstructorCall}
+ * are traced. Arrays being created are also traced.
+ * @author Pedro-170
+ *
+ */
 public class TraceVMExtended extends TraceVM {
 	/**
 	 * @param args

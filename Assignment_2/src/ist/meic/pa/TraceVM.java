@@ -9,6 +9,9 @@ import javassist.expr.NewExpr;
  * Class used to start a program with tracing enabled. It must setup a new
  * {@link ClassLoader} that modifies all classes being loaded to support
  * tracing.
+ * Use this class to trace objects with the base functionality required
+ * in the assignment. That functionality being to trace objects being
+ * return or passed as arguments in {@link MethodCall} or {@link NewExpr}.
  * 
  * @author Pedro-170
  * 
