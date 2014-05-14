@@ -22,7 +22,7 @@ public class TraceVM {
 	 * Debug messages flag.
 	 * Not sure where it can be changed besides before compilation.
 	 */
-	public static final boolean debug = false;
+	public static boolean debug = false;
 	
 	/**
 	 * @param args
@@ -62,6 +62,8 @@ class TraceTranslator implements Translator {
 	public void onLoad(ClassPool pool, String classname)
 			throws NotFoundException, CannotCompileException {
 		try {
+			if (TraceVM.debug)
+				System.out.println("Editing "+classname);
 			CtClass ctClass = pool.get(classname);
 			instrumentTrace(ctClass);
 		} catch (NotFoundException e) {

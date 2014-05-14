@@ -10,10 +10,8 @@ public abstract class TraceEntry {
 	
 	protected int linenum;
 	protected String filename;
-	protected String signature;
 	
-	protected TraceEntry(String sig, String file, int linenum) {
-		signature = sig;
+	protected TraceEntry(String file, int linenum) {
 		filename = file;
 		this.linenum = linenum;
 	}

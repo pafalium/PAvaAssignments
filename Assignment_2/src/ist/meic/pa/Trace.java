@@ -1,5 +1,6 @@
 package ist.meic.pa;
 
+import ist.meic.pa.entries.CastEntry;
 import ist.meic.pa.entries.PassEntry;
 import ist.meic.pa.entries.ReturnEntry;
 import ist.meic.pa.entries.TraceEntry;
@@ -50,5 +51,15 @@ public class Trace {
 		}
 		ReturnEntry entr = new ReturnEntry(sig, file, line);
 		traceHistory.get(ret).add(entr);
+	}
+	
+	// Extensions
+	
+	public static void traceCast(Object casted, String toClass, String file, int line) {
+		if (!traceHistory.containsKey(casted)) {
+			traceHistory.put(casted, new ArrayList<TraceEntry>());
+		}
+		CastEntry entr = new CastEntry(casted.getClass().getCanonicalName(), toClass, file, line);
+		traceHistory.get(casted).add(entr);
 	}
 }

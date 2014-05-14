@@ -6,14 +6,17 @@ import javassist.ClassPool;
 import javassist.Loader;
 import javassist.NotFoundException;
 import javassist.Translator;
+import javassist.expr.Cast;
 import javassist.expr.ConstructorCall;
 import javassist.expr.ExprEditor;
 import javassist.expr.NewArray;
 
 /**
  * Extension of {@link TraceVM}.
- * While using this class objects being passed in {@link ConstructorCall}
- * are traced. Arrays being created are also traced.
+ * Extension list:
+ * 		Objects being passed in {@link ConstructorCall} are traced;
+ * 		Arrays being created are traced;
+ * 		Down-casts are traced.
  * @author Pedro-170
  *
  */
@@ -95,6 +98,26 @@ class ExtendedTraceEditor extends TraceEditor {
 				"{\n"+
 				"    ist.meic.pa.Trace.traceArguments($args,"+sig+","+file+","+line+");\n"+
 				"    $proceed($$);\n"+
+				"}\n";
+		debugPrint(novaTemplate);
+		c.replace(novaTemplate);
+	}
+	@Override
+	public void edit(Cast c) throws CannotCompileException {
+		int line = c.getLineNumber();
+		String file = c.getFileName();
+		file = "\""+file+"\"";
+		String toClass;
+		try {
+			toClass = c.getType().getName();
+		} catch (NotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		toClass = "\""+toClass+"\"";
+		String novaTemplate = 
+				"{\n"+
+				"    ist.meic.pa.Trace.traceCast($1,"+toClass+","+file+","+line+");\n"+
+				"    $_ = $proceed($$);\n"+
 				"}\n";
 		debugPrint(novaTemplate);
 		c.replace(novaTemplate);
