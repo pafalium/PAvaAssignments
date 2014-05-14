@@ -116,7 +116,7 @@ class ExtendedTraceEditor extends TraceEditor {
 		toClass = "\""+toClass+"\"";
 		String novaTemplate = 
 				"{\n"+
-				"    ist.meic.pa.Trace.traceCast($1,"+toClass+","+file+","+line+");\n"+
+				"    ist.meic.pa.Trace.traceCast(($w)$1,"+toClass+","+file+","+line+");\n"+
 				"    $_ = $proceed($$);\n"+
 				"}\n";
 		debugPrint(novaTemplate);
